@@ -43,12 +43,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [
-          '18.04',
-          '20.04'
-        ]
+        os:
+          - '18.04'
+          - '20.04'
+        cxx:
+          - 'g++'
+          - 'clang++'
     runs-on: ubuntu-${{ matrix.os }}
-    name: '🐧 Ubuntu ${{ matrix.os }}'
+    name: '🐧 Ubuntu ${{ matrix.os }} ${{ matrix.cxx }}'
     steps:
 
     - uses: actions/checkout@v2
@@ -56,9 +58,11 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update -qq
-        sudo apt install -y make g++ git bison flex gperf libreadline-dev autoconf
+        sudo apt install -y make git bison flex gperf libreadline-dev autoconf
 
     - name: Build, check and install
+      env:
+        CXX: ${{ matrix.cxx }}
       run: |
         autoconf
         ./configure
